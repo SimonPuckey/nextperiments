@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    env_file: ./mongo/.env
+    command:
+      - --storageEngine=wiredTiger
+    volumes:
+      - ./mongo/data:/data/db
+    logging:
+      driver: none
+  payload:
+    image: node:18-alpine
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./payload:/home/node/app
+      - ./payload/node_modules:/home/node/app/node_modules
+    working_dir: /home/node/app/
+    command: sh -c "yarn install && yarn dev"
+    depends_on:
+      - mongo
+    env_file: ./payload/.env
+  next:
+    build:
+      context: ./next-spa-pwa
+      target: runner
+    volumes:
+      - ./next-spa-pwa:/app
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - payload
+#  benefit of separate volumes declaration?
+# volumes:
+#   data:
+#   node_modules:
