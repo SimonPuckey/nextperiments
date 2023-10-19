@@ -24,4 +24,14 @@ export default buildConfig({
   },
   // NOTE: should not get from env var anyway as this runs client side when running admin portal
   cors: "*", // because typed string[] | '*' is really hard to get direct from env var - maybe we need to type config first as above
+  // req,res logging mware
+  // https://payloadcms.com/docs/configuration/express#custom-middleware
+  express: {
+    postMiddleware: [
+      (req, res, next) => {
+        // console.log("in POST request mware");
+        next();
+      },
+    ],
+  },
 });
