@@ -18,6 +18,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/layout.tsx", "src/pages/blog-demo/posts/first-post.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/layout.tsx", "src/pages/nextjs-blog-tutorial/posts/first-post.tsx"],
   "exclude": ["node_modules"]
 }

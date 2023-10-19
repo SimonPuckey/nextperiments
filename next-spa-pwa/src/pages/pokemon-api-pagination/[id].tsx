@@ -1,7 +1,10 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { getSinglePokemon, getPokemonIds } from "../api";
-import PokemonCard from "../components/PokemonCard";
+import {
+  getSinglePokemon,
+  getPokemonIds,
+} from "../../features/pokemon-api/api";
+import PokemonCard from "../../features/pokemon-api/components/PokemonCard";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 

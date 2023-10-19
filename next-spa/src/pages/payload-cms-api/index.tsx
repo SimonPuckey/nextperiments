@@ -1,15 +1,15 @@
-import { find } from "@/features/payload-cms-example/api/posts";
+import { find } from "@/features/payload-cms-api/api";
 import { GetStaticProps } from "next";
 import { QueryClient, dehydrate, useQuery } from "react-query";
 import styled from "styled-components";
 
 export default function FindPosts() {
   const { isSuccess, data, isLoading, isError } = useQuery({
+    // NOTE so if caches is only ever going to return first 10 got by initial data
+    // TODO: need to think about pagination and react query asap
     queryKey: ["findPosts"],
-    queryFn: () => find(),
-    // NOTE: If impl this then query nevers gets run client-side because cached pop'd on server-side?
-    // TODO: understand react-query caching
-    // cacheTime: Infinity,
+    queryFn: () => find("posts"),
+    // so when loads component will get data from cache rather than make request
   });
 
   if (isLoading) {
@@ -44,9 +44,9 @@ export default function FindPosts() {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const queryClient = new QueryClient();
-  console.log("before prefetch");
-  await queryClient.prefetchQuery(["findPosts"], () => find());
-  console.log("after prefetch");
+
+  await queryClient.prefetchQuery(["findPosts"], () => find("posts"));
+
   return {
     props: {
       dehydratedState: dehydrate(queryClient),

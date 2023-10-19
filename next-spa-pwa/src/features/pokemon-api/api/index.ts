@@ -7,8 +7,10 @@ export type PokemonListItem = {
   url: string;
 };
 type PokemonListResponse = {
-  results?: PokemonListItem[];
+  results: PokemonListItem[];
   count: number;
+  next?: string | null;
+  previous?: string | null;
 };
 export type Pokemon = {
   name: string;
@@ -22,7 +24,6 @@ type SinglePokemonResponse = {
 export const getAllPokemon = async (limit: number) => {
   const limitQuery = `?limit=${limit}`;
   const res = await axios.get<PokemonListResponse>(baseUrl + limitQuery);
-
   return res?.data?.results;
 };
 
@@ -42,6 +43,20 @@ export const getAllPokemonV3 = async (pageSize: number, pageIndex: number) => {
   return { pokemon: res?.data?.results, count: res?.data?.count ?? 0 };
 };
 
+// infinite query play
+// TODO: pageParam will need to be index of lastpage fetched
+const pageSize = 10;
+export const getAllPokemonV4 = async (pageParam: number, pageSize: number) => {
+  const offset = pageParam * pageSize;
+  const pageQuery = `?offset=${offset}&limit=${pageSize}`;
+  const res = await axios.get<PokemonListResponse>(baseUrl + pageQuery);
+  // console.log("pokenemon list res", res);
+  return {
+    pokemon: res?.data?.results,
+    moreData: res?.data?.next ?? false,
+  };
+};
+
 // TOBE used by getStaticPaths and building the first page of dynamic pages on the server
 // only really need this method as dont use url at mo?
 export const getPokemonIds = async (limit: number) => {
@@ -55,6 +70,7 @@ export const getSinglePokemon = async (
   pokemonName: string
 ): Promise<Pokemon> => {
   const res = await axios.get<SinglePokemonResponse>(baseUrl + pokemonName);
+  console.log("single poke res", res);
   return {
     name: res.data.name,
     // types: res.data.types,

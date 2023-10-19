@@ -1,18 +1,17 @@
-// from https://nextjs.org/learn/basics/data-fetching/implement-getstaticprops
 import Link from "next/link";
-import { getAllPokemonV3 } from "../api";
-import Layout from "../../../components/layout";
-import utilStyles from "../../../styles/utils.module.css";
+import { getAllPokemonV3 } from "../../features/pokemon-api/api";
+import Layout from "../../components/layout";
+import utilStyles from "../../styles/utils.module.css";
 import { GetStaticProps } from "next";
 import { useRouter } from "next/router";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import { useState } from "react";
-import { Pagination } from "../components/Pagination";
+import { Pagination } from "../../features/pokemon-api/components/Pagination";
 
 const pageSize = 10;
 
-// export default function Home({ initialPokemonData }: { initialPokemonData: PokemonListItem[] }) {
-// removed props while attempt hydration
+// FOR DIFF BUT USEFUL PAGINATION
+// https://blog.logrocket.com/pagination-infinite-scroll-react-query-v3/
 const PokemonList = () => {
   const { pathname } = useRouter();
   //  console.log('path name is ', pathname)
@@ -80,6 +79,7 @@ const PokemonList = () => {
 
 export default PokemonList;
 
+// from https://nextjs.org/learn/basics/data-fetching/implement-getstaticprops
 export const getStaticProps: GetStaticProps = async (context) => {
   const id = context.params?.id as string;
   const queryClient = new QueryClient();
