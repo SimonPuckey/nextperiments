@@ -1,3 +1,8 @@
 node_modules/
 /mongo/data
 .DS_Store
+
+# Generated service worker files
+*/public/sw.js*
+*/public/workbox*.js*
+*/public/worker*

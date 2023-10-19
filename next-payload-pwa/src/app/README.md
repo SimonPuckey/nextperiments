@@ -10,3 +10,9 @@
 ## Templates
 
 In terms of Component tree: is rendered BETWEEN a `layout` and its `children`
+
+## Server Actions
+
+- Think be more useful when calling directly into server-side code e.g. when hooking up to payload-in-nextjs
+- For now would just be client triggering call on the server to 3rd party. so extra network hop by time returns data to client?
+  [Infinite Scroll with Server Actions](https://www.youtube.com/watch?v=IFYFezylQlI)

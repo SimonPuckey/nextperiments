@@ -1,8 +1,12 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import React from "react";
-import { QueryClient, QueryClientProvider, Hydrate } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import {
+  QueryClient,
+  QueryClientProvider,
+  Hydrate,
+} from "@tanstack/react-query";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // override page initialisation
 function MyApp({ Component, pageProps }: AppProps) {
@@ -13,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <Hydrate>
         <Component {...pageProps} />
-        <ReactQueryDevtools initialIsOpen />
+        {/* <ReactQueryDevtools initialIsOpen /> */}
       </Hydrate>
     </QueryClientProvider>
   );

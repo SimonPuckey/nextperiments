@@ -1,5 +1,5 @@
-import path from 'path';
-import { buildConfig } from 'payload/config';
+import path from "path";
+import { buildConfig } from "payload/config";
 
 export default buildConfig({
   collections: [
@@ -9,6 +9,6 @@ export default buildConfig({
     // Your globals here
   ],
   typescript: {
-    outputFile: path.resolve(__dirname, '../payload-types.ts'),
+    outputFile: path.resolve(__dirname, "../payload-types.ts"),
   },
 });

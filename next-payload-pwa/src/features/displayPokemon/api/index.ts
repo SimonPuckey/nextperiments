@@ -51,6 +51,7 @@ export const getAllPokemonV4 = async (pageParam: number, pageSize: number) => {
   const offset = pageParam > 0 ? pageParam * pageSize : 0; //sanitise to zero
   const pageQuery = `?offset=${offset}&limit=${pageSize}`;
   const res = await axios.get<PokemonListResponse>(baseUrl + pageQuery);
+  console.log("in getAllPokemonv4 after get req");
   // console.log("pokenemon list res", res);
   return {
     pokemon: res?.data?.results,

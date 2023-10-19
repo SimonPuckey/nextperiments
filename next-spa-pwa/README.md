@@ -68,6 +68,7 @@ Follow the steps in [Next-PWA docs](https://github.com/shadowwalker/next-pwa)
 Next-PWA has not been updated in a while and concerned wont work with NextJs 13 app router
 
 - Forks of next-pwa
+  - e.g. [this fork](https://ducanh-next-pwa.vercel.app/docs/next-pwa/getting-started) doesnt have [this issue](https://github.com/GoogleChrome/workbox/issues/1790)
 - [Next-With-Workbox](https://www.npmjs.com/package/next-with-workbox)
 
 ### Caching Strategy

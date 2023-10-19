@@ -1,20 +1,9 @@
-import Layout from "@/components/layout";
+"use client";
 import { getAllPokemonV4 } from "@/features/displayPokemon/api";
-import {
-  QueryClient,
-  dehydrate,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import { GetStaticProps } from "next";
 import PokemonCard from "@/features/displayPokemon/components/PokemonCard";
 import { useCallback, useRef } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-
-/* TODO:
-> link site title to home
-> link feed list item to own page
-*/
 
 /* Styles */
 // TODO see point why better to centralise styles in design system / UI component lib
@@ -33,9 +22,10 @@ const StyledListItem = styled.li`
 `;
 
 /* Component */
-const pageSize = 10;
-const PokemonInfiniteList = () => {
-  const { pathname } = useRouter();
+type PaginationProps = {
+  pageSize: number;
+};
+const PokemonFeed = ({ pageSize }: PaginationProps) => {
   const {
     isLoading,
     isError,
@@ -45,7 +35,7 @@ const PokemonInfiniteList = () => {
     isFetchingNextPage,
     isFetching,
   } = useInfiniteQuery(
-    ["getInfinitePokemon", pageSize],
+    ["getInfinitePokemon"],
     ({ pageParam }) => getAllPokemonV4(pageParam, pageSize),
     {
       getNextPageParam: (lastPage, pages) => {
@@ -54,6 +44,8 @@ const PokemonInfiniteList = () => {
         // from docs: Return undefined to indicate there is no next page available.
         return lastPage.moreData ? pages.length : undefined;
       },
+      // NOTE: may be usefult to leave as 'true' but confusing when confirming server-side rendering
+      // refetchOnWindowFocus: false,
     }
   );
 
@@ -96,13 +88,13 @@ const PokemonInfiniteList = () => {
 
   if (data) {
     return (
-      <Layout>
-        <section>
-          <HeadingLg>Pokemon</HeadingLg>
-          <StyledList>
-            {data?.pages?.map((page, i) => (
-              <div key={i}>
-                {page.pokemon.map(({ name }, i) => (
+      <section>
+        <HeadingLg>Pokemon</HeadingLg>
+        <StyledList>
+          {data?.pages?.map((page, i) => (
+            <div key={i}>
+              {page.pokemon.map(({ name }, i) => {
+                return (
                   <StyledListItem
                     key={name}
                     ref={
@@ -112,47 +104,23 @@ const PokemonInfiniteList = () => {
                     {/* <Link href={`${pathname}/${name}`}>{name}</Link> */}
                     <PokemonCard name={name} />
                   </StyledListItem>
-                ))}
-              </div>
-            ))}
-          </StyledList>
-          <button
-            onClick={() => fetchNextPage()}
-            disabled={!hasNextPage || isFetchingNextPage}
-          >
-            Load more
-          </button>
-        </section>
-      </Layout>
+                );
+              })}
+            </div>
+          ))}
+        </StyledList>
+        <button
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage || isFetchingNextPage}
+        >
+          Load more
+        </button>
+      </section>
     );
   }
+
+  // ...
+  //   return <h1>will be a list of pokemon 1 day!</h1>;
 };
 
-export default PokemonInfiniteList;
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const id = context.params?.id as string;
-  const queryClient = new QueryClient();
-  const pageIndex = 0;
-
-  await queryClient.prefetchQuery(["getInfinitePokemon", pageIndex], () =>
-    getAllPokemonV4(pageIndex, pageSize)
-  );
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-};
-
-/* DOCS */
-/*
-INFINITE REACT-QUERY
-https://tanstack.com/query/v4/docs/react/guides/infinite-queries
-PAGINATION
-https://blog.logrocket.com/pagination-infinite-scroll-react-query-v3/
-CALLBACK REFS
-https://tkdodo.eu/blog/avoiding-use-effect-with-callback-refs
-https://julesblom.com/writing/ref-callback-use-cases
-*/
+export default PokemonFeed;
