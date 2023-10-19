@@ -62,8 +62,13 @@ Follow the steps in [Next-PWA docs](https://github.com/shadowwalker/next-pwa)
 **Diff**
 
 - have tried to strip down [Head Meta tags](https://github.com/shadowwalker/next-pwa#step-3-add-head-meta-example) in `\_document.jsx` to only what is immediately needed
-
 - have used `worker/index.js`
+
+**Alternatives to Next-PWA**
+Next-PWA has not been updated in a while and concerned wont work with NextJs 13 app router
+
+- Forks of next-pwa
+- [Next-With-Workbox](https://www.npmjs.com/package/next-with-workbox)
 
 ### Caching Strategy
 
