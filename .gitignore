@@ -1,5 +1,5 @@
 node_modules/
-/mongo/data
+/mongo-db/data
 .DS_Store
 
 # Generated service worker files

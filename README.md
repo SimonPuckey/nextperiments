@@ -1,4 +1,6 @@
-# TS-Sandbox
+# NEXTPERIMENTS!
+
+Experiments with NextJs
 
 # Local Development
 

@@ -5,11 +5,11 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
-    env_file: ./mongo/.env
+    env_file: ./mongo-db/.env
     command:
       - --storageEngine=wiredTiger
     volumes:
-      - ./mongo/data:/data/db
+      - ./mongo-db/data:/data/db
     logging:
       driver: none
   payload:
@@ -17,19 +17,19 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - ./payload:/home/node/app
-      - ./payload/node_modules:/home/node/app/node_modules
+      - ./payload-cms:/home/node/app
+      - ./payload-cms/node_modules:/home/node/app/node_modules
     working_dir: /home/node/app/
     command: sh -c "yarn install && yarn dev"
     depends_on:
       - mongo
-    env_file: ./payload/.env
+    env_file: ./payload-cms/.env
   next:
     build:
-      context: ./next-spa-pwa
+      context: ./next-app
       target: runner
     volumes:
-      - ./next-spa-pwa:/app
+      - ./next-app:/app
     command: npm run dev
     ports:
       - "3000:3000"
