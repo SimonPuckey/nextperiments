@@ -11,6 +11,10 @@ https://codevoweb.com/setup-react-query-in-nextjs-13-app-directory/?utm_content=
 
 ## Resources
 
+Need this package (see instructions) but have uninstalled for now as dependency issues
+
+- "@tanstack/react-query-next-experimental": "^5.0.0-alpha.80",
+
 Impl guide based on:
 
 - https://tanstack.com/query/v5/docs/react/guides/suspense#suspense-on-the-server-with-streaming
