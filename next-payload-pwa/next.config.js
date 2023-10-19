@@ -14,7 +14,8 @@ module.exports = async () => {
   const pwaConfig = {
     // Config explained https://github.com/shadowwalker/next-pwa#configuration - put notes in jsdoc?
     // if dont need to run service worker caching in development
-    disable: process.env.NODE_ENV === 'development',
+    // disable: process.env.NODE_ENV === 'development',
+    disable: true,
     dest:'public'
   }
   const withPWA = require("next-pwa")(pwaConfig);

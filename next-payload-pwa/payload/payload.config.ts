@@ -11,7 +11,12 @@ export default buildConfig({
   // admin: {
   //   user: Users.slug,
   // },
-  collections: [Categories, Posts, Tags, Media],
+  // collections: [Categories, Posts, Tags, Media],
+  // excluding media as could mean 'sharp' is included
+  // which is a problem because then cannot find it remotely
+  // even though vercel claims to install it by default...
+  // https://github.com/payloadcms/next-payload/issues/72#issuecomment-1743760245
+  collections: [Categories, Posts, Tags],
   globals: [
     // Your globals here
   ],
