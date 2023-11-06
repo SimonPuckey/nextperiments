@@ -3,6 +3,7 @@ import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 import FeedItemCard from "./components/FeedItemCard";
 import { fetchPayloadPosts } from "./actions";
+import { ResultStatus } from "@/utils/resultV2";
 
 const HeadingLg = styled.h2`
   font-size: 1.5rem;
@@ -19,31 +20,59 @@ const StyledListItem = styled.li`
 `;
 
 type Post = {
+  // id: number | string,
   title: string;
 };
 type PostsProps = {
   initialData: Post[];
+  pageSize: number;
+  hasNextPage: boolean;
 };
 
-const PostFeed = ({ initialData }: PostsProps) => {
+// TODO
+/*
+- extract all data fetching hooks into own hook - useServerQuery 
+- then replace with React Query but call payload.find directly
+- trying to solve: is it easier to use RQ with server actions or just server actions with custom logic?
+- also extract intersection observer shiz into own hook
+*/
+
+const PostFeed = ({ initialData, pageSize, hasNextPage }: PostsProps) => {
   const [posts, setPosts] = useState(initialData);
   const [page, setPage] = useState(1);
+  const [hasMorePages, setHasMorePages] = useState(hasNextPage);
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadMore = useCallback(async () => {
+    setIsLoading(true);
     console.log("in load more with page", page);
     const nextPage = page + 1;
     console.log("in load more with nextpage", nextPage);
-    // todo: pass down page size from parent comp as prop
-    // todo: handle moreData boolean from action response so know if more pages
-    // todo: subsequent client side call should have same page size as original call
-    const data = await fetchPayloadPosts(nextPage, 5);
+    // const { posts, hasNextPage } = await fetchPayloadPosts(nextPage, pageSize);
+
+    // TODO: set timeout to prove isLoading works
+
+    setTimeout(async () => {
+      const result = await fetchPayloadPosts(nextPage, pageSize);
+      // TODO: nested if not so cool. Maybe Result type not best approach - try error boundary and suspense
+      if (result.status === ResultStatus.Ok) {
+        const {
+          value: { posts, hasNextPage },
+        } = result;
+        if (posts?.length) {
+          setHasMorePages(hasNextPage);
+          setPage(nextPage);
+          console.log("after set page with next page", nextPage);
+          setIsLoading(false);
+          setPosts((prev) => [...prev, ...posts]);
+        }
+      }
+      console.log("delayed for 5 secs");
+    }, 5000);
+    // const result = await fetchPayloadPosts(nextPage, pageSize);
+
     // pass fn to use state to compute new state by merging prev and new state
-    if (data?.posts?.docs.length) {
-      setPage(nextPage);
-      console.log("after set page with next page", nextPage);
-      setPosts((prev) => [...prev, ...data.posts.docs]);
-    }
-  }, [page]);
+  }, [page, pageSize]);
 
   const observer = useRef<IntersectionObserver>();
 
@@ -53,24 +82,23 @@ const PostFeed = ({ initialData }: PostsProps) => {
     (node: HTMLLIElement) => {
       // if data loading then bail...
       // TODO: replace react-query functionality?
-      //   if (isLoading) return;
+      if (isLoading) return;
       // if IntersectionObserver already assigned to observer ref then remove assignment
       if (observer.current) observer.current.disconnect();
       // assign intersection observer that fetches next page
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          //   loadMore();
+        if (entries[0].isIntersecting && hasMorePages) {
           loadMore();
         }
         // TODO: replace react-query functionality?
-        // if (entries[0].isIntersecting && hasNextPage && !isFetching) {
+        // if (entries[0].isIntersecting && hasNextPage && !isFetching) {npm run build
         //   fetchNextPage();
         // }
       });
       if (node) observer.current.observe(node);
     },
     // [isLoading, hasNextPage, isFetching, fetchNextPage]
-    [loadMore] // TODO: should i have load more in here but causes error
+    [isLoading, hasMorePages, loadMore] // TODO: should i have load more in here but causes error
   );
 
   return (
@@ -88,6 +116,7 @@ const PostFeed = ({ initialData }: PostsProps) => {
           );
         })}
       </StyledList>
+      {isLoading && <p>Loading...</p>}
     </section>
   );
 };
