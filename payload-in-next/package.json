@@ -19,7 +19,8 @@
     "payload": "^2.0.11",
     "react": "latest",
     "react-dom": "latest",
-    "styled-components": "^6.0.8"
+    "styled-components": "^6.0.8",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "latest",
