@@ -10,9 +10,6 @@ module.exports = async () => {
   */
    const nextConfig = {
     reactStrictMode: true,
-    experimental: {
-      serverActions: true
-    }
   }
   const pwaConfig = {
     // Config explained https://github.com/shadowwalker/next-pwa#configuration - put notes in jsdoc?
@@ -22,10 +19,7 @@ module.exports = async () => {
     dest:'public'
   }
   const withPWA = require("next-pwa")(pwaConfig);
-  const withPayloadConfig =  await withPayload(withPWA(nextConfig), {configPath: path.resolve(__dirname, "./payload/payload.config")});
-  // Features are no longer experimental but Payload pkg not updated to reflect this
-  const {experimental: {appDir, outputFileTracingIgnores, ...experimental}} = withPayloadConfig
-  return {...withPayloadConfig, experimental}
+  return await withPayload(withPWA(nextConfig), {configPath: path.resolve(__dirname, "./payload/payload.config")});
 }
 
 /*** REDUCE configs ***/
