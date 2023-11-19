@@ -1,6 +1,16 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Setup
+
+## Next
+
+## Next + Payload Serverless
+
+- [Payload 2.0](https://payloadcms.com/blog/payload-2-0)
+- [Next-Payload](https://github.com/payloadcms/next-payload)
+- [Next-Payload-Demo](https://github.com/payloadcms/next-payload-demo/)
+
+# Getting Started
 
 First, run the development server:
 
