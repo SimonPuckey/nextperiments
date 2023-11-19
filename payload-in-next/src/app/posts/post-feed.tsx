@@ -2,8 +2,8 @@
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 import FeedItemCard from "./components/FeedItemCard";
-import { fetchPayloadPosts } from "./actions";
-import { ResultStatus } from "@/utils/resultV2";
+import { getPosts } from "./actions";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const HeadingLg = styled.h2`
   font-size: 1.5rem;
@@ -24,101 +24,90 @@ type Post = {
   title: string;
 };
 type PostsProps = {
-  initialData: Post[];
   pageSize: number;
-  hasNextPage: boolean;
 };
 
-// TODO
-/*
-- extract all data fetching hooks into own hook - useServerQuery 
-- then replace with React Query but call payload.find directly
-- trying to solve: is it easier to use RQ with server actions or just server actions with custom logic?
+/* TODO
+- think of better way to set initialPageParam as a little janky
 - also extract intersection observer shiz into own hook
 */
 
-const PostFeed = ({ initialData, pageSize, hasNextPage }: PostsProps) => {
-  const [posts, setPosts] = useState(initialData);
-  const [page, setPage] = useState(1);
-  const [hasMorePages, setHasMorePages] = useState(hasNextPage);
-  const [isLoading, setIsLoading] = useState(false);
+const PostFeed = ({ pageSize }: PostsProps) => {
+  const {
+    isLoading,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetching,
+  } = useInfiniteQuery({
+    queryKey: ["getPosts"],
+    queryFn: ({ pageParam }) => getPosts(pageParam, pageSize),
+    // HC'ing starting page seems bit rubbish when prefetching and controlling pagesize 🤨
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      // this function determines the pageParam that gets passed to the query fn
+      // https://tanstack.com/query/v5/docs/react/guides/infinite-queries
+      return lastPage.hasNextPage ? lastPage.nextPage : undefined;
+    },
+    // below may be useful to leave as 'true' but confusing when confirming server-side rendering
+    // refetchOnWindowFocus: false,
+    // below throws to nearest ErrorBoundary, rather than using isError
+    // https://tkdodo.eu/blog/react-query-error-handling#error-boundaries
+    throwOnError: true,
+  });
 
-  const loadMore = useCallback(async () => {
-    setIsLoading(true);
-    console.log("in load more with page", page);
-    const nextPage = page + 1;
-    console.log("in load more with nextpage", nextPage);
-    // const { posts, hasNextPage } = await fetchPayloadPosts(nextPage, pageSize);
-
-    // TODO: set timeout to prove isLoading works
-
-    setTimeout(async () => {
-      const result = await fetchPayloadPosts(nextPage, pageSize);
-      // TODO: nested if not so cool. Maybe Result type not best approach - try error boundary and suspense
-      if (result.status === ResultStatus.Ok) {
-        const {
-          value: { posts, hasNextPage },
-        } = result;
-        if (posts?.length) {
-          setHasMorePages(hasNextPage);
-          setPage(nextPage);
-          console.log("after set page with next page", nextPage);
-          setIsLoading(false);
-          setPosts((prev) => [...prev, ...posts]);
-        }
-      }
-      console.log("delayed for 5 secs");
-    }, 5000);
-    // const result = await fetchPayloadPosts(nextPage, pageSize);
-
-    // pass fn to use state to compute new state by merging prev and new state
-  }, [page, pageSize]);
-
+  // TODO: Can I put IntersectionObserver logic into own hook
+  // Would have to pass in some of what useInfiniteQuery returns
   const observer = useRef<IntersectionObserver>();
-
   // callback ref for DOM element
   // rather than storing a ref to DOM elem will execute function with elem as arg, when elem is rendered
   const handleIntersection = useCallback(
     (node: HTMLLIElement) => {
-      // if data loading then bail...
-      // TODO: replace react-query functionality?
       if (isLoading) return;
       // if IntersectionObserver already assigned to observer ref then remove assignment
       if (observer.current) observer.current.disconnect();
       // assign intersection observer that fetches next page
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMorePages) {
-          loadMore();
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
         }
-        // TODO: replace react-query functionality?
-        // if (entries[0].isIntersecting && hasNextPage && !isFetching) {npm run build
-        //   fetchNextPage();
-        // }
       });
       if (node) observer.current.observe(node);
     },
-    // [isLoading, hasNextPage, isFetching, fetchNextPage]
-    [isLoading, hasMorePages, loadMore] // TODO: should i have load more in here but causes error
+    [isLoading, fetchNextPage, hasNextPage]
   );
 
-  return (
-    <section>
-      <HeadingLg>Posts</HeadingLg>
-      <StyledList>
-        {posts.map(({ title }, i) => {
-          return (
-            <StyledListItem
-              key={title}
-              ref={posts.length - 1 === i ? handleIntersection : null}
-            >
-              <FeedItemCard title={title} />
-            </StyledListItem>
-          );
-        })}
-      </StyledList>
-      {isLoading && <p>Loading...</p>}
-    </section>
-  );
+  if (data) {
+    return (
+      <section>
+        <HeadingLg>Posts Feed V3</HeadingLg>
+        <StyledList>
+          {data?.pages?.map((page, i) => {
+            return (
+              <div key={i}>
+                {page.posts.map(({ title }, i) => {
+                  return (
+                    <StyledListItem
+                      key={title}
+                      ref={
+                        page.posts.length - 1 === i ? handleIntersection : null
+                      }
+                    >
+                      <FeedItemCard title={title} />
+                    </StyledListItem>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </StyledList>
+        {isLoading && <p>Loading...</p>}
+      </section>
+    );
+  }
+
+  return <></>;
 };
 
 export default PostFeed;

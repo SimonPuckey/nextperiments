@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { PlainQCProvider } from "../utils/query-client-providers";
+import { Providers } from "../utils/query-client-providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <PlainQCProvider>{children}</PlainQCProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
