@@ -1,9 +1,9 @@
 "use client";
-import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 import FeedItemCard from "./components/FeedItemCard";
 import { getPosts } from "./actions";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteScroll } from "./useInfiniteScroll";
 
 const HeadingLg = styled.h2`
   font-size: 1.5rem;
@@ -19,10 +19,6 @@ const StyledListItem = styled.li`
   margin: 0 0 1.25rem;
 `;
 
-type Post = {
-  // id: number | string,
-  title: string;
-};
 type PostsProps = {
   pageSize: number;
 };
@@ -57,26 +53,11 @@ const PostFeed = ({ pageSize }: PostsProps) => {
     throwOnError: true,
   });
 
-  // TODO: Can I put IntersectionObserver logic into own hook
-  // Would have to pass in some of what useInfiniteQuery returns
-  const observer = useRef<IntersectionObserver>();
-  // callback ref for DOM element
-  // rather than storing a ref to DOM elem will execute function with elem as arg, when elem is rendered
-  const handleIntersection = useCallback(
-    (node: HTMLLIElement) => {
-      if (isLoading) return;
-      // if IntersectionObserver already assigned to observer ref then remove assignment
-      if (observer.current) observer.current.disconnect();
-      // assign intersection observer that fetches next page
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasNextPage) {
-          fetchNextPage();
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [isLoading, fetchNextPage, hasNextPage]
-  );
+  const handleIntersection = useInfiniteScroll({
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+  });
 
   if (data) {
     return (
