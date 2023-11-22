@@ -1,9 +1,9 @@
 "use client";
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
-import FeedItemCard from "../components/FeedItemCard";
+import FeedItemCard from "../../../app/posts/components/FeedItemCard";
 import { getPosts } from "./actions";
-import { ResultStatus } from "@/app/posts/sans-react-query/utils/resultV2";
+import { ResultStatus } from "@/experiments/sans-react-query/utils/resultV2";
 
 const HeadingLg = styled.h2`
   font-size: 1.5rem;

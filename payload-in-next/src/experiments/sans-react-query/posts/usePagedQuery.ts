@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { ResultStatus } from "@/app/posts/sans-react-query/utils/resultV2";
-import { getCachedPagedQuery, getQueryClient } from "./utils/queryClient";
+import { ResultStatus } from "@/experiments/sans-react-query/utils/resultV2";
+import { getCachedPagedQuery, getQueryClient } from "../utils/queryClient";
 
 // TODO: experimenting with server actions version of useInfiniteQuery. sort of
 // TODO: Params: queryFn, ...

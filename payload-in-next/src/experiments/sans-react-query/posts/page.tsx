@@ -1,8 +1,8 @@
 import React from "react";
 import PostFeed from "./post-feed";
 import { getPosts } from "./actions";
-import { ResultStatus } from "@/app/posts/sans-react-query/utils/resultV2";
-import { getCachedPagedQuery, getQueryClient } from "./utils/queryClient";
+import { ResultStatus } from "@/experiments/sans-react-query/utils/resultV2";
+import { getCachedPagedQuery, getQueryClient } from "../utils/queryClient";
 
 const pageSize = 5;
 const Page = async () => {
@@ -13,7 +13,6 @@ const Page = async () => {
     queryFn: async () => await getPosts(1, pageSize),
   });
   const x0 = await getCachedPagedQuery("getPosts");
-  console.log("get cached value", x0);
   const result = await getPosts(1, pageSize);
   // NOTE: once pattern matched can access specific type in union type
   if (result.status === ResultStatus.Ok) {

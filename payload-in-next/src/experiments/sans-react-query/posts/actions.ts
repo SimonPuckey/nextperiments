@@ -3,7 +3,7 @@ import { TypeWithID } from "payload/types";
 import getPayloadClient from "../../../../payload/payloadClient";
 import { PaginatedDocs } from "payload/database";
 import { toPostsResponse } from "./mappers";
-import { Result } from "@/app/posts/sans-react-query/utils/resultV2";
+import { Result } from "@/experiments/sans-react-query/utils/resultV2";
 
 // TODO what paging params can we pass to payload client
 export const getPosts = async (page: number, pageSize: number) => {

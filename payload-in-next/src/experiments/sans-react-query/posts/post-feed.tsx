@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
-import FeedItemCard from "../components/FeedItemCard";
+import FeedItemCard from "../../../app/posts/components/FeedItemCard";
 import { getPosts } from "./actions";
 import { usePagedQuery } from "./usePagedQuery";
 

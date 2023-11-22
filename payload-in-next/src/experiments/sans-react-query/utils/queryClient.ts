@@ -27,7 +27,6 @@ export const getQueryClient = () => {
   const prefetchPagedQuery = async ({ queryKey, queryFn }: QueryInfo) => {
     const queryResult = await queryFn();
     pagedQueryCache[queryKey] = { queryResult, lastPage: 1 }; // prefetch should always only get 1st page
-    console.log("paged query cache when prefetch", pagedQueryCache);
   };
   /** TODO as NOT WORKING
    * calling get fn the cahce is undefined because have created new query client. Doh
@@ -39,7 +38,6 @@ export const getQueryClient = () => {
 };
 
 export const getCachedPagedQuery = async (queryKey: string) => {
-  console.log("paged query cache when get", pagedQueryCache);
   return pagedQueryCache[queryKey];
 };
 
