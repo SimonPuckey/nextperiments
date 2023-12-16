@@ -11,10 +11,8 @@ export default function Error({
   useEffect(() => {
     // Log the error to an error reporting service?
     // have already logged closer to source of error
-    console.error("error is", error);
+    console.error("Error boundary caught error:", error);
   }, [error]);
-
-  console.log("in error component");
   return (
     <div>
       <h2>Something went wrong!</h2>
